@@ -3,7 +3,7 @@ package Backend;
 import java.sql.*;
 
 public class SQLAccess {
-    private static final String URL = "jdbc:mysql://localhost:3306/your_database_name";
+    private static final String URL = "jdbc:mysql://127.0.0.1:3306/employee_details";
     private static final String USER = "root";
     private static final String PASSWORD = "root";
 
