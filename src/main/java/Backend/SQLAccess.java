@@ -23,7 +23,7 @@ public class SQLAccess {
 
     // ============================= EMPLOYEE METHODS =============================
     public void insertEmployee(int id, String name, String email, String role) throws SQLException {
-        String sql = "INSERT INTO Employee (id, name, email, role) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO employee (id, name, email, role) VALUES (?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             pstmt.setString(2, name);
@@ -34,13 +34,13 @@ public class SQLAccess {
     }
 
     public ResultSet selectEmployees() throws SQLException {
-        String sql = "SELECT * FROM Employee";
+        String sql = "SELECT * FROM employee";
         Statement stmt = connection.createStatement();
         return stmt.executeQuery(sql);
     }
 
     public void updateEmployeeRole(int id, String newRole) throws SQLException {
-        String sql = "UPDATE Employee SET role = ? WHERE id = ?";
+        String sql = "UPDATE employee SET role = ? WHERE id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, newRole);
             pstmt.setInt(2, id);
@@ -49,10 +49,22 @@ public class SQLAccess {
     }
 
     public void deleteEmployee(int id) throws SQLException {
-        String sql = "DELETE FROM Employee WHERE id = ?";
+        String sql = "DELETE FROM employee WHERE id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
+        }
+    }
+
+    public void selectParticularEmployee(int id){
+        String sql = "SELECT FROM employee WHERE id =?";
+        try{
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1,id);
+            ResultSet resultSet = pstmt.executeQuery();
+            //return resultSet.ge;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
