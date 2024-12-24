@@ -11,6 +11,18 @@ public class Task {
     private  String status;
     private String category;
     private Date dueDate;
-    List<Employee>
+//    List<Employee>
+    private void createTask(){
+
+    }
+    private  void updateTask(){
+
+    }
+    private void assignEmployee(){
+
+    }
+    private void setPriority(){
+
+    }
 
 }
