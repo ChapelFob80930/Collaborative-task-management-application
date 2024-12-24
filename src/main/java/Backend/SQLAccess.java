@@ -1,5 +1,7 @@
 package Backend;
 
+import com.google.gson.Gson;
+
 import java.sql.*;
 
 public class SQLAccess {
@@ -22,13 +24,17 @@ public class SQLAccess {
     }
 
     // ============================= EMPLOYEE METHODS =============================
-    public void insertEmployee(int id, String name, String email, String role) throws SQLException {
-        String sql = "INSERT INTO employee (id, name, email, role) VALUES (?, ?, ?, ?)";
+    public void insertEmployee(int id, String name, String email, String role, int projectId, Employee employee) throws SQLException {
+        String sql = "INSERT INTO employee (employeeId, name, email, role, projectId, employeeJson) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            Gson gson = new Gson();
+            String employeeJson = gson.toJson(employee);
             pstmt.setInt(1, id);
             pstmt.setString(2, name);
             pstmt.setString(3, email);
             pstmt.setString(4, role);
+            pstmt.setInt(5, projectId);
+            pstmt.setString(6, employeeJson);
             pstmt.executeUpdate();
         }
     }
@@ -39,8 +45,17 @@ public class SQLAccess {
         return stmt.executeQuery(sql);
     }
 
+    public void setEmployeeProject(int projectId, int empId) throws SQLException {
+        String sql = "UPDATE employee SET projectId  = ? WHERE employeeId = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, projectId);
+            pstmt.setInt(2, empId);
+            pstmt.executeUpdate();
+        }
+    }
+
     public void updateEmployeeRole(int id, String newRole) throws SQLException {
-        String sql = "UPDATE employee SET role = ? WHERE id = ?";
+        String sql = "UPDATE employee SET role = ? WHERE employeeId = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, newRole);
             pstmt.setInt(2, id);
@@ -49,20 +64,21 @@ public class SQLAccess {
     }
 
     public void deleteEmployee(int id) throws SQLException {
-        String sql = "DELETE FROM employee WHERE id = ?";
+        String sql = "DELETE FROM employee WHERE employeeId = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
         }
     }
 
-    public void selectParticularEmployee(int id){
-        String sql = "SELECT FROM employee WHERE id =?";
+    public Employee selectParticularEmployee(int id){
+        String sql = "SELECT FROM employee WHERE employeeId =?";
         try{
+            Gson gson = new Gson();
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setInt(1,id);
             ResultSet resultSet = pstmt.executeQuery();
-            //return resultSet.ge;
+            return gson.fromJson(resultSet.getString("employeeJson"), Employee.class);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

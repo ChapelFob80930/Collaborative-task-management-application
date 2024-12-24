@@ -4,6 +4,7 @@ module org.cosmos.collaborativetaskmanagementapplication {
 
     requires org.controlsfx.controls;
     requires org.kordamp.bootstrapfx.core;
+    requires com.google.gson;
     requires java.sql;
 
     opens Frontend to javafx.fxml;
