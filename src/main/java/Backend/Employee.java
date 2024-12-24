@@ -11,29 +11,70 @@ public class Employee {
     private String name;
     private String email;
     private String role;
-    List<Project> assignedProjects = new ArrayList<>();
-    private static Map<Integer,Employee> registeredEmployees = new HashMap<Integer,Employee>(); //temporary will learn how to add java objects to database to make it much easier to access stuff
+    List<Project> assignedProjects;
 
     public Employee(int id, String name, String email, String role) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.role = role;
+        List<Project> assignedProjects = new ArrayList<>();
     }
 
-    public void addEmployee(){
-
+    public void addEmployee(int id, String name, String email, String role){
+        Employee employee = new Employee(id,name,email,role);
+        try{
+            SQLAccess db = new SQLAccess();
+            db.insertEmployee(id,name,email,role,null,employee);
+            db.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void editEmployee(){
+//    public void editEmployee(){
+//
+//    }
 
+    public void removeEmployee(int empId){
+        try{
+            SQLAccess db = new SQLAccess();
+            db.deleteEmployee(empId);
+            db.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void removeEmployee(){
-
+    public void viewEmployeeDetails(int empId){
+        try{
+            SQLAccess db = new SQLAccess();
+            Employee emp= db.selectParticularEmployee(empId);
+            db.close();
+            System.out.print(emp.toString());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void viewEmployeeDetails(){
+    public void assignProject(int projectId, int empId){
+        try{
+            SQLAccess db =new SQLAccess();
+            db.setEmployeeProject(projectId,empId);
+            db.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
+                ", assignedProjects=" + assignedProjects +
+                '}';
     }
 }

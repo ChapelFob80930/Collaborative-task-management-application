@@ -24,7 +24,7 @@ public class SQLAccess {
     }
 
     // ============================= EMPLOYEE METHODS =============================
-    public void insertEmployee(int id, String name, String email, String role, int projectId, Employee employee) throws SQLException {
+    public void insertEmployee(int id, String name, String email, String role, Integer projectId, Employee employee) throws SQLException {
         String sql = "INSERT INTO employee (employeeId, name, email, role, projectId, employeeJson) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             Gson gson = new Gson();
@@ -63,20 +63,20 @@ public class SQLAccess {
         }
     }
 
-    public void deleteEmployee(int id) throws SQLException {
+    public void deleteEmployee(int empId) throws SQLException {
         String sql = "DELETE FROM employee WHERE employeeId = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
+            pstmt.setInt(1, empId);
             pstmt.executeUpdate();
         }
     }
 
-    public Employee selectParticularEmployee(int id){
+    public Employee selectParticularEmployee(int empId){
         String sql = "SELECT FROM employee WHERE employeeId =?";
         try{
             Gson gson = new Gson();
             PreparedStatement pstmt = connection.prepareStatement(sql);
-            pstmt.setInt(1,id);
+            pstmt.setInt(1,empId);
             ResultSet resultSet = pstmt.executeQuery();
             return gson.fromJson(resultSet.getString("employeeJson"), Employee.class);
         } catch (SQLException e) {
