@@ -148,60 +148,51 @@ public class Employee {
 
     public List<Project> getAssignedProjects() {
         return assignedProjects;
-
-    public BooleanExpression idProperty() {
-        return null;
     }
 
-    public ObservableValue<String> nameProperty() {
-        return null;
-    }
+//    public BooleanExpression idProperty() {
+//        return null;
+//    }
+//
+//    public ObservableValue<String> nameProperty() {
+//        return null;
+//    }
+//
+//    public ObservableValue<String> emailProperty() {
+//        return null;
+//    }
+//
+//    public ObservableValue<String> phoneProperty() {
+//        return null;
+//    }
+//
+//    public ObservableValue<String> roleProperty() {
+//        return null;
+//    }
+//
+//    public ObservableValue<String> projectsProperty() {
+//        return null;
+//    }
+//
+//    public void setRole(String value) {
+//
+//    }
+//
+//    public int getId() {
+//        return 0;
+//    }
+//
+//    public String getName() {
+//        return null;
+//    }
+//
+//    public String getEmail() {
+//        return null;
+//    }
+//
+//    public String getRole() {
+//        return null;
+//    }
 
-    public ObservableValue<String> emailProperty() {
-        return null;
-    }
 
-    public ObservableValue<String> phoneProperty() {
-        return null;
-    }
-
-    public ObservableValue<String> roleProperty() {
-        return null;
-    }
-
-    public ObservableValue<String> projectsProperty() {
-        return null;
-    }
-
-    public void setRole(String value) {
-
-    }
-
-    public int getId() {
-        return 0;
-    }
-
-    public String getName() {
-        return null;
-    }
-
-    public String getEmail() {
-        return null;
-    }
-
-    public String getRole() {
-        return null;
-    }
-
-    public void setName(String text) {
-
-    }
-
-    public void setEmail(String text) {
-
-    }
-
-    public void setPhone(String text) {
-
-    }
 }
