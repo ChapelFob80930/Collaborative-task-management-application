@@ -1,14 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="Frontend.EmployeeScreenController"
-            prefHeight="400.0" prefWidth="600.0">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Frontend.EmployeeScreenController">
+    <children>
+        <!-- Title -->
+        <Label layoutX="300" layoutY="10" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Employee Management" />
 
+        <!-- TableView for Employee List -->
+        <TableView fx:id="employeeTable" layoutX="50" layoutY="50" prefHeight="300.0" prefWidth="700.0">
+            <columns>
+                <TableColumn fx:id="employeeIdColumn" text="Employee ID" />
+                <TableColumn fx:id="employeeNameColumn" text="Name" />
+                <TableColumn fx:id="employeeEmailColumn" text="Email" />
+                <TableColumn fx:id="employeePhoneColumn" text="Phone" />
+                <TableColumn fx:id="employeeRoleColumn" text="Role" />
+                <TableColumn fx:id="employeeProjectsColumn" text="Assigned Projects" />
+            </columns>
+        </TableView>
+
+        <!-- Employee Details Form -->
+        <Label layoutX="50" layoutY="360" text="Employee Details" />
+        <Label layoutX="50" layoutY="400" text="Name:" />
+        <TextField fx:id="nameField" layoutX="120" layoutY="400" prefWidth="200.0" />
+        <Label layoutX="350" layoutY="400" text="Email:" />
+        <TextField fx:id="emailField" layoutX="420" layoutY="400" prefWidth="200.0" />
+        <Label layoutX="50" layoutY="440" text="Phone:" />
+        <TextField fx:id="phoneField" layoutX="120" layoutY="440" prefWidth="200.0" />
+        <Label layoutX="350" layoutY="440" text="Role:" />
+        <ChoiceBox fx:id="roleBox" layoutX="420" layoutY="440" prefWidth="200.0" />
+
+        <!-- Buttons -->
+        <Button fx:id="addButton" layoutX="50" layoutY="500" text="Add Employee" />
+        <Button fx:id="editButton" layoutX="200" layoutY="500" text="Edit Employee" />
+        <Button fx:id="deleteButton" layoutX="350" layoutY="500" text="Delete Employee" />
+
+        <!-- Search Bar -->
+        <TextField fx:id="searchField" layoutX="567.0" layoutY="11.0" prefWidth="150.0" promptText="Search..." />
+        <Button fx:id="searchButton" layoutX="733.0" layoutY="11.0" text="Search" />
+
+        <!-- Employee History -->
+        <Label layoutX="50" layoutY="550" text="Employee History" />
+        <TextArea fx:id="historyArea" layoutX="50" layoutY="580" prefHeight="100.0" prefWidth="700.0" />
+    </children>
 </AnchorPane>
