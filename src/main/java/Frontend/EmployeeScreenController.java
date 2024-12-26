@@ -63,7 +63,7 @@ public class EmployeeScreenController {
     private ObservableList<Employee> employeeList;
 
     @FXML
-    public void initialize() {
+    public void initialize() throws SQLException {
         // Initialize SQLAccess
         sqlAccess = new SQLAccess();
 

@@ -12,7 +12,7 @@ public class Employee {
     private final int id;
     private String name;
     private String email;
-    private final String role;
+    private String role;
     protected List<Project> assignedProjects;
 
     public Employee(int id, String name, String email, String role, String s, String string) {
@@ -108,13 +108,14 @@ public class Employee {
         return employees;
     }
 
-    public void editEmployee(int id, String name, String email) {
+    public void editEmployee(int id, String name, String role, String email) {
         try {
             SQLAccess db = new SQLAccess();
             Employee emp = db.selectParticularEmployee(id);
             emp.setName(name);
             emp.setEmail(email);
-            db.updateEmployee(id, name, email, emp);
+            emp.setRole(role);
+            db.updateEmployee(id, name, email, role, emp);
             db.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -150,49 +151,34 @@ public class Employee {
         return assignedProjects;
     }
 
-//    public BooleanExpression idProperty() {
-//        return null;
-//    }
-//
-//    public ObservableValue<String> nameProperty() {
-//        return null;
-//    }
-//
-//    public ObservableValue<String> emailProperty() {
-//        return null;
-//    }
-//
-//    public ObservableValue<String> phoneProperty() {
-//        return null;
-//    }
-//
-//    public ObservableValue<String> roleProperty() {
-//        return null;
-//    }
-//
-//    public ObservableValue<String> projectsProperty() {
-//        return null;
-//    }
-//
-//    public void setRole(String value) {
-//
-//    }
-//
-//    public int getId() {
-//        return 0;
-//    }
-//
-//    public String getName() {
-//        return null;
-//    }
-//
-//    public String getEmail() {
-//        return null;
-//    }
-//
-//    public String getRole() {
-//        return null;
-//    }
+    public BooleanExpression idProperty() {
+        return null;
+    }
+
+    public ObservableValue<String> nameProperty() {
+        return null;
+    }
+
+    public ObservableValue<String> emailProperty() {
+        return null;
+    }
+
+    public ObservableValue<String> phoneProperty() {
+        return null;
+    }
+
+    public ObservableValue<String> roleProperty() {
+        return null;
+    }
+
+    public ObservableValue<String> projectsProperty() {
+        return null;
+    }
+
+    public void setRole(String value) {
+
+    }
+
 
 
 }

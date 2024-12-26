@@ -119,16 +119,17 @@ public class SQLAccess {
         }
     }
 
-    public void updateEmployee(int empId, String name, String email, Employee employee){
-        String sql = "UPDATE employee SET name = ?, email = ?, employeeJson = ? WHERE employeeId = ?";
+    public void updateEmployee(int empId, String name, String email, String role, Employee employee){
+        String sql = "UPDATE employee SET name = ?, email = ?, role = ?, employeeJson = ? WHERE employeeId = ?";
         try {
             Gson gson =new Gson();
             String empJson = gson.toJson(employee);
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, name);
             pstmt.setString(2, email);
-            pstmt.setString(3, empJson);
-            pstmt.setInt(4, empId);
+            pstmt.setString(3,role);
+            pstmt.setString(4, empJson);
+            pstmt.setInt(5, empId);
 
             pstmt.executeUpdate();
         }catch(SQLException e){
