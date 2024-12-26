@@ -269,4 +269,16 @@ public class SQLAccess {
             pstmt.executeUpdate();
         }
     }
+
+    public void addEmployee(Employee newEmployee) {
+
+    }
+
+    public Employee getAllEmployees() {
+        return null;
+    }
+
+    public void updateEmployee(Employee selectedEmployee) {
+
+    }
 }
