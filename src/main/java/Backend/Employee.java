@@ -1,10 +1,11 @@
 package Backend;
 
+import javafx.beans.binding.BooleanExpression;
+import javafx.beans.value.ObservableValue;
+
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Employee {
     private final int id;
@@ -13,7 +14,7 @@ public class Employee {
     private final String role;
     protected List<Project> assignedProjects;
 
-    public Employee(int id, String name, String email, String role) {
+    public Employee(int id, String name, String email, String role, String s, String string) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -21,8 +22,14 @@ public class Employee {
         List<Project> assignedProjects = new ArrayList<>();
     }
 
+    public Employee(int id, String name, String email, String phone, String role, String s, int id1, String role1) {
+
+        this.id = id1;
+        this.role = role1;
+    }
+
     public void addEmployee(int id, String name, String email, String role){
-        Employee employee = new Employee(id,name,email,role);
+        Employee employee = new Employee(id,name,email,role, role, "");
         try{
             SQLAccess db = new SQLAccess();
             db.insertEmployee(id,name,email,role,null,employee);
@@ -82,4 +89,59 @@ public class Employee {
                 '}';
     }//i dont think it will work that way we have to do everthing in @fxml then all this because we have to get this on label on our page
 
+    public BooleanExpression idProperty() {
+        return null;
+    }
+
+    public ObservableValue<String> nameProperty() {
+        return null;
+    }
+
+    public ObservableValue<String> emailProperty() {
+        return null;
+    }
+
+    public ObservableValue<String> phoneProperty() {
+        return null;
+    }
+
+    public ObservableValue<String> roleProperty() {
+        return null;
+    }
+
+    public ObservableValue<String> projectsProperty() {
+        return null;
+    }
+
+    public void setRole(String value) {
+
+    }
+
+    public int getId() {
+        return 0;
+    }
+
+    public String getName() {
+        return null;
+    }
+
+    public String getEmail() {
+        return null;
+    }
+
+    public String getRole() {
+        return null;
+    }
+
+    public void setName(String text) {
+
+    }
+
+    public void setEmail(String text) {
+
+    }
+
+    public void setPhone(String text) {
+
+    }
 }
