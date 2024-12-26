@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 public class Employee {
-    private int id;
+    private final int id;
     private String name;
     private String email;
-    private String role;
-    List<Project> assignedProjects;
+    private final String role;
+    protected List<Project> assignedProjects;
 
     public Employee(int id, String name, String email, String role) {
         this.id = id;
@@ -61,6 +61,10 @@ public class Employee {
         try{
             SQLAccess db =new SQLAccess();
             db.setEmployeeProject(projectId,empId);
+            Employee employee=db.selectParticularEmployee(empId);
+            Project project = db.selectParticularProject(projectId);
+            employee.assignedProjects.add(project);
+            db.updateEmployeeJSON(empId,employee);
             db.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
