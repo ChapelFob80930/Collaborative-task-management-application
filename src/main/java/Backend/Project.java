@@ -2,6 +2,7 @@ package Backend;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +26,8 @@ public class Project {
         this.description = description;
         this.startDate = startDate;
         this.name = name;
+        this.teamMembersId = new ArrayList<Integer>();
+        this.tasks = new ArrayList<String>();
     }
 
     public void createProject(int projectId, String status, float budget, Date endDate, String description, Date startDate, String name){
@@ -56,8 +59,13 @@ public class Project {
         }
     }
 
-    public void closeProject(){
-        //SQL
-        //JavaFX probably in separate project page controller
+    public void closeProject(int projectId){
+        try{
+            SQLAccess db= new SQLAccess();
+            db.deleteProject(projectId);
+            db.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

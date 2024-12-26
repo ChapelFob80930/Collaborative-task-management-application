@@ -119,6 +119,24 @@ public class SQLAccess {
         }
     }
 
+    public void updateEmployee(int empId, String name, String email, Employee employee){
+        String sql = "UPDATE employee SET name = ?, email = ?, employeeJson = ? WHERE employeeId = ?";
+        try {
+            Gson gson =new Gson();
+            String empJson = gson.toJson(employee);
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, name);
+            pstmt.setString(2, email);
+            pstmt.setString(3, empJson);
+            pstmt.setInt(4, empId);
+
+            pstmt.executeUpdate();
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+
     // ============================== TASK METHODS ===============================
     public void insertTask(int id, String title, String description, String priority, String status, String category, Date dueDate, int assignedEmployee) throws SQLException {
         String sql = "INSERT INTO Task (id, title, description, priority, status, category, dueDate, assignedEmployee) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";

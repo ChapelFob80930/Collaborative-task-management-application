@@ -1,5 +1,7 @@
 package Backend;
 
+import com.google.gson.Gson;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,15 +48,17 @@ public class Employee {
         }
     }
 
-    public void viewEmployeeDetails(int empId){
+    public Employee viewEmployeeDetails(int empId){
+        Employee emp;
         try{
             SQLAccess db = new SQLAccess();
-            Employee emp= db.selectParticularEmployee(empId);
+            emp= db.selectParticularEmployee(empId);
             db.close();
             System.out.print(emp.toString());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return emp;
     }
 
     public void assignProject(int projectId, int empId){
@@ -80,6 +84,63 @@ public class Employee {
                 ", role='" + role + '\'' +
                 ", assignedProjects=" + assignedProjects +
                 '}';
-    }//i dont think it will work that way we have to do everthing in @fxml then all this because we have to get this on label on our page
+    }
 
+    public List<Employee> getAllEmployees(){
+        List<Employee> employees = new ArrayList<Employee>();
+        try {
+            Gson gson = new Gson();
+            SQLAccess db = new SQLAccess();
+            ResultSet rs = db.selectAllEmployees();
+            while(rs.next()){
+                employees.add(gson.fromJson(rs.getString("employeeJson"), Employee.class));
+            }
+            db.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return employees;
+    }
+
+    public void editEmployee(int id, String name, String email) {
+        try {
+            SQLAccess db = new SQLAccess();
+            Employee emp = db.selectParticularEmployee(id);
+            emp.setName(name);
+            emp.setEmail(email);
+            db.updateEmployee(id, name, email, emp);
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error updating employee details", e);
+        }
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public List<Project> getAssignedProjects() {
+        return assignedProjects;
+    }
 }
