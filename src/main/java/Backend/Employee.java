@@ -80,5 +80,6 @@ public class Employee {
                 ", role='" + role + '\'' +
                 ", assignedProjects=" + assignedProjects +
                 '}';
-    }
+    }//i dont think it will work that way we have to do everthing in @fxml then all this because we have to get this on label on our page
+
 }
