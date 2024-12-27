@@ -1,43 +1,53 @@
 package Backend;
 
-import java.util.ArrayList;
+import Backend.SQLAccess;
+
 import java.util.Date;
-import java.util.List;
 
 public class Task {
-    private int taskId;
+    private final int taskId;
     private String title;
     private String description;
     private String priority;
-    private  String status;
-    private String category;
+    private String status;
     private Date dueDate;
-    List<Employee> tasks;
+    private int assignedEmployeeId;
 
-
-    public Task(int taskId, String title, String description, String priority, String status, String category, Date dueDate) {
+    public Task(int taskId, int assignedEmployeeId, Date dueDate, String status, String priority, String description, String title) {
         this.taskId = taskId;
-        this.title = title;
-        this.description = description;
-        this.priority = priority;
-        this.status = status;
-        this.category = category;
+        this.assignedEmployeeId = assignedEmployeeId;
         this.dueDate = dueDate;
-        List<Employee> tasks = new ArrayList<>();
+        this.status = status;
+        this.priority = priority;
+        this.description = description;
+        this.title = title;
     }
 
-    private void createTask(){
-
-
-    }
-    private  void updateTask(){
-
-    }
-    private void assignEmployee(){
-
-    }
-    private void setPriority(){
-
+    public void createTask() {
+        try {
+            SQLAccess db = new SQLAccess();
+            db.insertTask(taskId, title, description, priority, status, (java.sql.Date) dueDate, assignedEmployeeId);
+            db.close();
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating task", e);
+        }
     }
 
+    public void updateTask(String title, String description, String priority, String status) {
+        try {
+            SQLAccess db = new SQLAccess();
+            this.title = title;
+            this.description = description;
+            this.priority = priority;
+            this.status = status;
+            db.updateTaskStatus(id, status);
+            db.close();
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating task", e);
+        }
+    }
+
+    public void assignEmployee(int employeeId) {
+        this.assigned_employee_id = employeeId;
+    }
 }

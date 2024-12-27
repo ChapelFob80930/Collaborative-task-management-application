@@ -9,4 +9,6 @@ module org.cosmos.collaborativetaskmanagementapplication {
 
     opens Frontend to javafx.fxml;
     exports Frontend;
+    exports Backend;
+    opens Backend to javafx.fxml;
 }

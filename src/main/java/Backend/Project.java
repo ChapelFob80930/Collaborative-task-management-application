@@ -24,7 +24,7 @@ public class Project {
         this.budget = budget;
         this.endDate = endDate;
         this.description = description;
-        this.startDate = startDate;
+        this.startDate = new Date();
         this.name = name;
         this.teamMembersId = new ArrayList<Integer>();
         this.tasks = new ArrayList<String>();
@@ -41,9 +41,18 @@ public class Project {
         }
     }
 
-    public void updateProjectDetails(){
-        //SQL
-        //JavaFX probably in separate project page controller
+    public void updateProjectDetails(int projectId, String description, Date endDate, String status, String name){
+        try{
+            SQLAccess db=new SQLAccess();
+            Project pr=db.selectParticularProject(projectId);
+            pr.setDescription(description);
+            pr.setEndDate(endDate);
+            pr.setName(name);
+            pr.setStatus(status);
+            db.updateProject(projectId,description, (java.sql.Date) endDate,status,pr,name);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void assignTeamMember(int projectId,int teamMemberId){
@@ -67,5 +76,51 @@ public class Project {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+
+
+    public int getProjectId() {
+        return projectId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public float getBudget() {
+        return budget;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public String getStatus() {
+        return status;
     }
 }

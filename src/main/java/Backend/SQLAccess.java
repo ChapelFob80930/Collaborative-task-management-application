@@ -3,7 +3,9 @@ package Backend;
 import com.google.gson.Gson;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SQLAccess {
@@ -139,17 +141,16 @@ public class SQLAccess {
 
 
     // ============================== TASK METHODS ===============================
-    public void insertTask(int id, String title, String description, String priority, String status, String category, Date dueDate, int assignedEmployee) throws SQLException {
-        String sql = "INSERT INTO Task (id, title, description, priority, status, category, dueDate, assignedEmployee) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public void insertTask(int taskId, String title, String description, String priority, String status, Date dueDate, int assignedEmployeeId) throws SQLException {
+        String sql = "INSERT INTO Task (taskId, title, description, priority, status, dueDate, assignedEmployeeId) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
+            pstmt.setInt(1, taskId);
             pstmt.setString(2, title);
             pstmt.setString(3, description);
             pstmt.setString(4, priority);
             pstmt.setString(5, status);
-            pstmt.setString(6, category);
-            pstmt.setDate(7, dueDate);
-            pstmt.setInt(8, assignedEmployee);
+            pstmt.setDate(6, dueDate);
+            pstmt.setInt(7, assignedEmployeeId);
             pstmt.executeUpdate();
         }
     }
@@ -160,19 +161,19 @@ public class SQLAccess {
         return stmt.executeQuery(sql);
     }
 
-    public void updateTaskStatus(int id, String newStatus) throws SQLException {
-        String sql = "UPDATE Task SET status = ? WHERE id = ?";
+    public void updateTaskStatus(int taskId, String newStatus) throws SQLException {
+        String sql = "UPDATE Task SET status = ? WHERE taskId = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, newStatus);
-            pstmt.setInt(2, id);
+            pstmt.setInt(2, taskId);
             pstmt.executeUpdate();
         }
     }
 
-    public void deleteTask(int id) throws SQLException {
-        String sql = "DELETE FROM Task WHERE id = ?";
+    public void deleteTask(int taskId) throws SQLException {
+        String sql = "DELETE FROM Task WHERE taskId = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
+            pstmt.setInt(1, taskId);
             pstmt.executeUpdate();
         }
     }
@@ -214,12 +215,21 @@ public class SQLAccess {
         }
     }
 
-    public void updateProjectStatus(int id, String newStatus) throws SQLException {
-        String sql = "UPDATE Project SET status = ? WHERE id = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, newStatus);
-            pstmt.setInt(2, id);
+    public void updateProject(int projectId, String description, Date endDate, String status, Project project, String name) throws SQLException {
+        String sql = "UPDATE project SET description = ?, endDate = ?, Status = ?, projectJSON = ?, name =? WHERE projectId = ?";
+        try {
+            Gson gson =new Gson();
+            String projectJson = gson.toJson(project);
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, description);
+            pstmt.setDate(2,endDate);
+            pstmt.setString(3, status);
+            pstmt.setString(4, projectJson);
+            pstmt.setString(5, name);
+            pstmt.setInt(6, projectId);
             pstmt.executeUpdate();
+        }catch(SQLException e){
+            throw new RuntimeException(e);
         }
     }
 
@@ -242,44 +252,135 @@ public class SQLAccess {
         }
     }
 
-    // =========================== FILE MANAGER METHODS ==========================
-    public void insertFile(int id, String fileName, int uploadedBy, Date uploadDate, int projectId) throws SQLException {
-        String sql = "INSERT INTO FileManager (id, fileName, uploadedBy, uploadDate, projectId) VALUES (?, ?, ?, ?, ?)";
+    // ============================ FILE MANAGER METHODS ============================
+    public void insertFile(int id, String file_name, int uploaded_by, Date upload_date, int project_id, String file_type, long file_size, byte[] file_content) throws SQLException {
+        String sql = "INSERT INTO filemanager (fileId, fileName, uploadedBy, uploadDate, projectId, fileType, fileSize, fileContent) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, id);
-            pstmt.setString(2, fileName);
-            pstmt.setInt(3, uploadedBy);
-            pstmt.setDate(4, uploadDate);
-            pstmt.setInt(5, projectId);
+            pstmt.setString(2, file_name);
+            pstmt.setInt(3, uploaded_by);
+            pstmt.setTimestamp(4, new Timestamp(upload_date.getTime()));
+            pstmt.setInt(5, project_id);
+            pstmt.setString(6, file_type);
+            pstmt.setLong(7, file_size);
+            pstmt.setBytes(8, file_content);
             pstmt.executeUpdate();
-        }
-    }
-
-    public ResultSet selectFilesByProject(int projectId) throws SQLException {
-        String sql = "SELECT * FROM FileManager WHERE projectId = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, projectId);
-            return pstmt.executeQuery();
         }
     }
 
     public void deleteFile(int id) throws SQLException {
-        String sql = "DELETE FROM FileManager WHERE id = ?";
+        String sql = "DELETE FROM filemanager WHERE fileId = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
         }
     }
 
-    public void addEmployee(Employee newEmployee) {
-
+    public byte[] selectFileContent(int fileId) throws SQLException {
+        String sql = "SELECT fileContent FROM filemanager WHERE fileId = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, fileId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getBytes("fileContent");
+            } else {
+                throw new SQLException("File content not found for fileId: " + fileId);
+            }
+        }
     }
 
-    public Employee getAllEmployees() {
+    // ============================= NOTIFICATION METHODS =============================
+    public void insertNotification(int notiId, int employeeId, String message, Date date, boolean isRead) throws SQLException {
+        String sql = "INSERT INTO notifications (notificationId, empId, message, date, isRead) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, notiId);
+            pstmt.setInt(2, employeeId);
+            pstmt.setString(3, message);
+            pstmt.setTimestamp(4, new Timestamp(date.getTime()));
+            pstmt.setBoolean(5, isRead);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public void updateNotificationReadStatus(int notiId, boolean isRead) throws SQLException {
+        String sql = "UPDATE notifications SET isRead = ? WHERE notificationId = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setBoolean(1, isRead);
+            pstmt.setInt(2, notiId);
+            pstmt.executeUpdate();
+        }
+    }
+
+
+    // ================================ TEAM METHODS ================================
+
+    public void createTeam(int teamId, String teamName, int projectId, Team team) {
+    }
+
+    public void insertTeamMember(int teamId, int employeeId) throws SQLException {
+        String sql = "INSERT INTO team_members (teamId, employeeId) VALUES (?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, teamId);
+            pstmt.setInt(2, employeeId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public void deleteTeamMember(int teamId, int employeeId) throws SQLException {
+        String sql = "DELETE FROM team_members WHERE teamId = ? AND employeeId = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, teamId);
+            pstmt.setInt(2, employeeId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public List<Integer> selectTeamMembers(int teamId) throws SQLException {
+        String sql = "SELECT employeeId FROM team_members WHERE teamId = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, teamId);
+            ResultSet rs = pstmt.executeQuery();
+            List<Integer> memberIds = new ArrayList<>();
+            while (rs.next()) {
+                memberIds.add(rs.getInt("employeeId"));
+            }
+            return memberIds;
+        }
+    }
+
+
+
+    public Team selectTeam(int teamId) {
         return null;
     }
 
-    public void updateEmployee(Employee selectedEmployee) {
 
+    // ================================ AUDITLOG METHODS ================================
+    public void insertAuditLog(int logId, String action, Date timestamp, int performedBy) throws SQLException {
+        String sql = "INSERT INTO auditlog (logId, action, timestamp, performedBy) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, logId);
+            pstmt.setString(2, action);
+            pstmt.setTimestamp(3, new Timestamp(timestamp.getTime()));
+            pstmt.setInt(4, performedBy);
+            pstmt.executeUpdate();
+        }
     }
+
+    public ResultSet selectAuditLogs() throws SQLException {
+        String sql = "SELECT * FROM auditlog";
+        Statement stmt = connection.createStatement();
+        return stmt.executeQuery(sql);
+    }
+
+    public void deleteAuditLog(int logId) throws SQLException {
+        String sql = "DELETE FROM auditlog WHERE logId = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, logId);
+            pstmt.executeUpdate();
+        }
+    }
+
+
+
 }
