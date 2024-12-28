@@ -2,7 +2,7 @@ package Backend;
 
 import java.util.Date;
 
-class Notifications {
+public class Notifications {
     private final int notificationId;
     private final int empId;
     private String message;
@@ -17,10 +17,11 @@ class Notifications {
         this.isRead = false;
     }
 
-    public void sendNotification() {
+    public void sendNotification(int notificationId, int empId, String message) {
+        Notifications notification = new Notifications(notificationId,empId,message);
         try {
             SQLAccess db = new SQLAccess();
-            db.insertNotification(notificationId, empId, message, (java.sql.Date) date, isRead);
+            db.insertNotification(notificationId, empId, message, (java.sql.Date) date, isRead, notification);
             db.close();
         } catch (Exception e) {
             throw new RuntimeException("Error sending notification", e);

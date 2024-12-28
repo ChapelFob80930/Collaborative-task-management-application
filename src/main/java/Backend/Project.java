@@ -68,6 +68,19 @@ public class Project {
         }
     }
 
+    public void removeTeamMember(int projectId,int teamMemberId){
+
+        try{
+            SQLAccess db= new SQLAccess();
+            Project project = db.selectParticularProject(projectId);
+            project.teamMembersId.remove(teamMemberId);
+            db.updateProjectJSON(projectId,project);
+            db.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void closeProject(int projectId){
         try{
             SQLAccess db= new SQLAccess();

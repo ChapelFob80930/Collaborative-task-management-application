@@ -141,9 +141,11 @@ public class SQLAccess {
 
 
     // ============================== TASK METHODS ===============================
-    public void insertTask(int taskId, String title, String description, String priority, String status, Date dueDate, int assignedEmployeeId) throws SQLException {
-        String sql = "INSERT INTO Task (taskId, title, description, priority, status, dueDate, assignedEmployeeId) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public void insertTask(int taskId, String title, String description, String priority, String status, Date dueDate, int assignedEmployeeId, Task task) throws SQLException {
+        String sql = "INSERT INTO Task (taskId, title, description, priority, status, dueDate, assignedEmployeeId, taskJSON) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            Gson gson = new Gson();
+            String taskJSON = gson.toJson(task);
             pstmt.setInt(1, taskId);
             pstmt.setString(2, title);
             pstmt.setString(3, description);
@@ -151,6 +153,7 @@ public class SQLAccess {
             pstmt.setString(5, status);
             pstmt.setDate(6, dueDate);
             pstmt.setInt(7, assignedEmployeeId);
+            pstmt.setString(8, taskJSON);
             pstmt.executeUpdate();
         }
     }
@@ -161,12 +164,34 @@ public class SQLAccess {
         return stmt.executeQuery(sql);
     }
 
-    public void updateTaskStatus(int taskId, String newStatus) throws SQLException {
-        String sql = "UPDATE Task SET status = ? WHERE taskId = ?";
+    public void updateTaskStatus(int taskId, String newStatus, Task task) throws SQLException {
+        String sql = "UPDATE Task SET status = ?, taskJSON = ?  WHERE taskId = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            Gson gson = new Gson();
+            String taskJSON = gson.toJson(task);
             pstmt.setString(1, newStatus);
-            pstmt.setInt(2, taskId);
+            pstmt.setString(2, taskJSON);
+            pstmt.setInt(3, taskId);
             pstmt.executeUpdate();
+        }
+    }
+
+    public void updateTaskDetails(int taskId, String title, String description, String priority, String status, Date dueDate, int assignedEmployeeId, Task task) {
+        String sql = "UPDATE employee SET title = ?, description = ?, priority = ?, status = ?, dueDate = ?, assignedEmployeeId = ?, taskJSON = ? WHERE taskId = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            Gson gson = new Gson();
+            String taskJSON = gson.toJson(task);
+            pstmt.setString(1, title);
+            pstmt.setString(2, description);
+            pstmt.setString(3, priority);
+            pstmt.setString(4, status);
+            pstmt.setDate(5, dueDate);
+            pstmt.setInt(6, assignedEmployeeId);
+            pstmt.setString(7, taskJSON);
+            pstmt.setInt(8, taskId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -175,6 +200,18 @@ public class SQLAccess {
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, taskId);
             pstmt.executeUpdate();
+        }
+    }
+
+    public Task getTaskJson(int taskId) {
+        String sql = "SELECT FROM Task WHERE taskId = ?";
+        try {
+            Gson gson = new Gson();
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            ResultSet resultSet = pstmt.executeQuery();
+            return  gson.fromJson((resultSet.getString("taskJSON")),Task.class);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -253,9 +290,11 @@ public class SQLAccess {
     }
 
     // ============================ FILE MANAGER METHODS ============================
-    public void insertFile(int id, String file_name, int uploaded_by, Date upload_date, int project_id, String file_type, long file_size, byte[] file_content) throws SQLException {
-        String sql = "INSERT INTO filemanager (fileId, fileName, uploadedBy, uploadDate, projectId, fileType, fileSize, fileContent) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public void insertFile(int id, String file_name, int uploaded_by, Date upload_date, int project_id, String file_type, long file_size, byte[] file_content,FileManager fileManager) throws SQLException {
+        String sql = "INSERT INTO filemanager (fileId, fileName, uploadedBy, uploadDate, projectId, fileType, fileSize, fileContent, filemanagerJSON) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            Gson gson = new Gson();
+            String filemanagerJSON = gson.toJson(fileManager);
             pstmt.setInt(1, id);
             pstmt.setString(2, file_name);
             pstmt.setInt(3, uploaded_by);
@@ -264,6 +303,7 @@ public class SQLAccess {
             pstmt.setString(6, file_type);
             pstmt.setLong(7, file_size);
             pstmt.setBytes(8, file_content);
+            pstmt.setString(9, filemanagerJSON);
             pstmt.executeUpdate();
         }
     }
@@ -289,15 +329,33 @@ public class SQLAccess {
         }
     }
 
+    public FileManager getFileManagerJSON(int fileId){
+        String sql = "SELECT FROM filemanager WHERE fileId = ?";
+        try{
+            Gson gson = new Gson();
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1,fileId);
+            ResultSet resultSet = pstmt.executeQuery();
+            return gson.fromJson(resultSet.getString("filemanagerJSON"),FileManager.class);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
     // ============================= NOTIFICATION METHODS =============================
-    public void insertNotification(int notiId, int employeeId, String message, Date date, boolean isRead) throws SQLException {
-        String sql = "INSERT INTO notifications (notificationId, empId, message, date, isRead) VALUES (?, ?, ?, ?, ?)";
+    public void insertNotification(int notiId, int employeeId, String message, Date date, boolean isRead, Notifications notifications) throws SQLException {
+        String sql = "INSERT INTO notifications (notificationId, empId, message, date, isRead, notificationJSON) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            Gson gson = new Gson();
+            String notificationJSON = gson.toJson(notifications);
             pstmt.setInt(1, notiId);
             pstmt.setInt(2, employeeId);
             pstmt.setString(3, message);
             pstmt.setTimestamp(4, new Timestamp(date.getTime()));
             pstmt.setBoolean(5, isRead);
+            pstmt.setString(6, notificationJSON);
             pstmt.executeUpdate();
         }
     }
@@ -312,57 +370,60 @@ public class SQLAccess {
     }
 
 
-    // ================================ TEAM METHODS ================================
-
-    public void createTeam(int teamId, String teamName, int projectId, Team team) {
-    }
-
-    public void insertTeamMember(int teamId, int employeeId) throws SQLException {
-        String sql = "INSERT INTO team_members (teamId, employeeId) VALUES (?, ?)";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, teamId);
-            pstmt.setInt(2, employeeId);
-            pstmt.executeUpdate();
-        }
-    }
-
-    public void deleteTeamMember(int teamId, int employeeId) throws SQLException {
-        String sql = "DELETE FROM team_members WHERE teamId = ? AND employeeId = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, teamId);
-            pstmt.setInt(2, employeeId);
-            pstmt.executeUpdate();
-        }
-    }
-
-    public List<Integer> selectTeamMembers(int teamId) throws SQLException {
-        String sql = "SELECT employeeId FROM team_members WHERE teamId = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, teamId);
-            ResultSet rs = pstmt.executeQuery();
-            List<Integer> memberIds = new ArrayList<>();
-            while (rs.next()) {
-                memberIds.add(rs.getInt("employeeId"));
-            }
-            return memberIds;
-        }
-    }
-
-
-
-    public Team selectTeam(int teamId) {
-        return null;
-    }
+//    // ================================ TEAM METHODS ================================
+//
+//    public void createTeam(int teamId, String teamName, int projectId, Team team) {
+//    }
+//
+//    public void insertTeamMember(int teamId, int employeeId) throws SQLException {
+//        String sql = "INSERT INTO team_members (teamId, employeeId) VALUES (?, ?)";
+//        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+//            pstmt.setInt(1, teamId);
+//            pstmt.setInt(2, employeeId);
+//            pstmt.executeUpdate();
+//        }
+//    }
+//
+//    public void deleteTeamMember(int teamId, int employeeId) throws SQLException {
+//        String sql = "DELETE FROM team_members WHERE teamId = ? AND employeeId = ?";
+//        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+//            pstmt.setInt(1, teamId);
+//            pstmt.setInt(2, employeeId);
+//            pstmt.executeUpdate();
+//        }
+//    }
+//
+//    public List<Integer> selectTeamMembers(int teamId) throws SQLException {
+//        String sql = "SELECT employeeId FROM team_members WHERE teamId = ?";
+//        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+//            pstmt.setInt(1, teamId);
+//            ResultSet rs = pstmt.executeQuery();
+//            List<Integer> memberIds = new ArrayList<>();
+//            while (rs.next()) {
+//                memberIds.add(rs.getInt("employeeId"));
+//            }
+//            return memberIds;
+//        }
+//    }
+//
+//
+//
+//    public Team selectTeam(int teamId) {
+//        return null;
+//    }
 
 
     // ================================ AUDITLOG METHODS ================================
-    public void insertAuditLog(int logId, String action, Date timestamp, int performedBy) throws SQLException {
-        String sql = "INSERT INTO auditlog (logId, action, timestamp, performedBy) VALUES (?, ?, ?, ?)";
+    public void insertAuditLog(int logId, String action, Date timestamp, int performedBy, AuditLog auditLog) throws SQLException {
+        String sql = "INSERT INTO auditlog (logId, action, timestamp, performedBy, auditlogJSON) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            Gson gson = new Gson();
+            String auditLogJSON = gson.toJson(auditLog);
             pstmt.setInt(1, logId);
             pstmt.setString(2, action);
             pstmt.setTimestamp(3, new Timestamp(timestamp.getTime()));
             pstmt.setInt(4, performedBy);
+            pstmt.setString(5, auditLogJSON);
             pstmt.executeUpdate();
         }
     }

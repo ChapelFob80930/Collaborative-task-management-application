@@ -1,15 +1,16 @@
 package Backend;
 
+import java.sql.SQLException;
 import java.util.Date;
 
-class FileManager {
-    private int id;
+public class FileManager {
+    private final int id;
     private String file_name;
-    private int uploaded_by;
+    private final int uploaded_by;
     private Date upload_date;
-    private int project_id;
-    private String file_type;
-    private long file_size;
+    private final int project_id;
+    private final String file_type;
+    private final long file_size;
     private byte[] file_content;
 
     public FileManager(int id, String file_name, int uploaded_by, int project_id, String file_type, long file_size, byte[] file_content) {
@@ -23,10 +24,11 @@ class FileManager {
         this.upload_date = new Date();
     }
 
-    public void uploadFile() {
+    public void uploadFile(int id, String file_name, int uploaded_by, int project_id, String file_type, long file_size, byte[] file_content) {
         try {
+            FileManager fileManager = new FileManager(id, file_name, uploaded_by, project_id, file_type, file_size, file_content);
             SQLAccess db = new SQLAccess();
-            db.insertFile(id, file_name, uploaded_by, (java.sql.Date) upload_date, project_id, file_type, file_size, file_content);
+            db.insertFile(id, file_name, uploaded_by, (java.sql.Date) fileManager.upload_date, project_id, file_type, file_size, file_content,fileManager);
             db.close();
         } catch (Exception e) {
             throw new RuntimeException("Error uploading file", e);
@@ -51,6 +53,16 @@ class FileManager {
             return content;
         } catch (Exception e) {
             throw new RuntimeException("Error fetching file content", e);
+        }
+    }
+
+    public void getFileDetails(int fileId){
+        try{
+            SQLAccess db = new SQLAccess();
+            FileManager fileManager = db.getFileManagerJSON(fileId);
+            //whatever details we need to show on the frontend
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }
