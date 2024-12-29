@@ -443,5 +443,15 @@ public class SQLAccess {
     }
 
 
+    public Employee getAllEmployees() {
+        return null;
+    }
 
+    public void updateEmployee(Employee selectedEmployee) {
+
+    }
+
+    public void addEmployee(Employee newEmployee) {
+
+    }
 }
