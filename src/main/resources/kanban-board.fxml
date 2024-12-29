@@ -1,14 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="Frontend.KanbanBoardController"
-            prefHeight="400.0" prefWidth="600.0">
+<AnchorPane prefHeight="457.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Frontend.KanbanBoardController">
+
+    <!-- Title Label -->
+    <Label layoutX="250.0" layoutY="10.0" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Kanban Board" />
+
+    <!-- Navigation Buttons -->
+    <Button layoutX="10.0" layoutY="10.0" onAction="#goToHome" style="-fx-font-size: 14px;" text="Home" />
+    <Button layoutX="500.0" layoutY="10.0" onAction="#addTask" style="-fx-font-size: 14px;" text="Add Task" />
+
+    <!-- Columns Container -->
+    <HBox layoutX="10.0" layoutY="50.0" prefHeight="340.0" prefWidth="580.0" spacing="10.0">
+        <!-- To Do Column -->
+        <VBox prefWidth="180.0" spacing="5.0" style="-fx-border-color: black; -fx-border-width: 1;">
+            <Label alignment="CENTER" style="-fx-font-weight: bold;" text="To Do" />
+            <ListView fx:id="todoList" prefHeight="300.0" prefWidth="180.0" />
+        </VBox>
+
+        <!-- In Progress Column -->
+        <VBox prefWidth="180.0" spacing="5.0" style="-fx-border-color: black; -fx-border-width: 1;">
+            <Label alignment="CENTER" style="-fx-font-weight: bold;" text="In Progress" />
+            <ListView fx:id="inProgressList" prefHeight="300.0" prefWidth="180.0" />
+        </VBox>
+
+        <!-- Done Column -->
+        <VBox prefWidth="180.0" spacing="5.0" style="-fx-border-color: black; -fx-border-width: 1;">
+            <Label alignment="CENTER" style="-fx-font-weight: bold;" text="Done" />
+            <ListView fx:id="doneList" prefHeight="300.0" prefWidth="180.0" />
+        </VBox>
+    </HBox>
+
+    <!-- Footer Section -->
+    <HBox layoutX="14.0" layoutY="413.0" spacing="20.0">
+        <Button onAction="#openSettings" style="-fx-font-size: 14px;" text="Settings" />
+        <Button onAction="#openHelp" style="-fx-font-size: 14px;" text="Help" />
+    </HBox>
 
 </AnchorPane>
